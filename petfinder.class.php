@@ -9,8 +9,8 @@ class PetFinder
 {
   // config api
   var $api_url	 			= 'http://api.petfinder.com/';
-  var $api_key 				= $GLOBALS["api_key"];
-  var $api_secret 		= $GLOBALS["api_secret"];
+  var $api_key 				= FALSE;
+  var $api_secret 		= FALSE;
   var $api_sig				= FALSE;
   var $api_token			= FALSE;
 	var $api_format			= 'json';
@@ -24,7 +24,11 @@ class PetFinder
   var $pets = Array();
 
 	function __construct() {
-	  // search pet info
+		// search pet info
+		
+		$this->api_key = $GLOBALS['api_key'];
+		$this->api_secret = $GLOBALS['api_secret'];
+
 		$this->search_pet = new Pet;
 		if ($_COOKIE['pf_token'])
 		{
