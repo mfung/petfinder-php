@@ -1,20 +1,20 @@
 <?php
 class pet {
-  var $id		= FALSE;
-  var $animal		= FALSE;
-  var $breeds		= FALSE;
-  var $mix		= FALSE;
-  var $age		= FALSE;
-  var $name		= FALSE;
-	var $shelter_id	= FALSE;
-	var $location = FALSE;
-  var $size		= FALSE;
-  var $sex		= FALSE;
-  var $description	= FALSE;
-  var $last_update	= FALSE;
-  var $status		= FALSE;
-  var $media		= FALSE;
-	var $contact		= FALSE;
+  var $id							= FALSE;
+  var $animal					= FALSE;
+  var $breeds					= FALSE;
+  var $mix						= FALSE;
+  var $age						= FALSE;
+  var $name						= FALSE;
+	var $shelter_id			= FALSE;
+	var $location 			= FALSE;
+  var $size						= FALSE;
+  var $sex						= FALSE;
+  var $description		= FALSE;
+  var $last_update		= FALSE;
+  var $status					= FALSE;
+  var $media					= FALSE;
+	var $contact				= FALSE;
 
 	public function setId($new_id) {
 		$this->id = $new_id;
@@ -26,7 +26,7 @@ class pet {
 	}
 
 	public function setAnimal($new_animal) {
-		$this->id = $new_animal;
+		$this->animal = $new_animal;
 		return $this;
 	}
 
@@ -35,7 +35,7 @@ class pet {
 	}
 
 	public function setBreeds($new_breeds) {
-		$this->id = $new_breeds;
+		$this->breeds = $new_breeds;
 		return $this;
 	}
 
@@ -49,7 +49,7 @@ class pet {
 	}
 
 	public function getMix() {
-		return $this->Mix;
+		return $this->mix;
 	}
 
 	public function setAge($new_age) {
@@ -151,4 +151,37 @@ class pet {
 		return $this->contact;
 	}
 }
+
+class Media {
+	var $size		= FALSE;
+	var $link		= FALSE;
+	var $id			= FALSE;
+
+	public function setSize($new_size) {
+		$this->size = $new_size;
+		return $this;
+	}
+	
+	public function getSize() {
+		return $this->size;
+	}
+
+	public function setLink($new_link) {
+		$this->link = $new_link;
+		return $this;
+	}
+	
+	public function getLink() {
+		return $this->link;
+	}
+	public function setId($new_id) {
+		$this->id = $new_id;
+		return $this;
+	}
+	
+	public function getId() {
+		return $this->id;
+	}
+}
+
 ?>

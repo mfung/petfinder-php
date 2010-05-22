@@ -30,6 +30,7 @@ class PetFinder
 		$this->api_secret = $GLOBALS['api_secret'];
 
 		$this->search_pet = new Pet;
+		
 		if ($_COOKIE['pf_token'])
 		{
 			$this->api_token = $_COOKIE['pf_token'];
@@ -40,23 +41,169 @@ class PetFinder
 		}
 	}
 
-  public function setZip($new_zip) {
-    $this->zip = $new_zip;
-  }
+	public function getBreedList($new_animal) {
+		$this->setAnimal($new_animal);
+		$jsonRx = $this->curl('breed.list?' . $this->getQueryString());
+		$obj = json_decode($jsonRx);
+	 	$aBreedList = $obj->petfinder->breeds->breed;
+
+		return $this->getArrBreedList($aBreedList);
+	}
+
+	public function getPet($new_pet_id) {
+		$this->search_pet->setId($new_pet_id);
+		$jsonRx = $this->curl('pet.get?' . $this->getQueryString());
+		$obj = json_decode($jsonRx);
+		
+		echo '<br><br>GET PET DUMP<br>';
+		var_dump($obj);
+
+		echo '<br><br>GET PET<br><br>';
+		$myPet = new Pet;
+		$myPet->setId($obj->petfinder->pet->id->{'$t'})
+					->setAnimal($obj->petfinder->pet->animal->{'$t'})
+					->setBreeds($this->getArrBreedList($obj->petfinder->pet->breeds->breed))
+					->setMix($obj->petfinder->pet->mix->{'$t'})
+					->setAge($obj->petfinder->pet->age->{'$t'})
+					->setName($obj->petfinder->pet->name->{'$t'})
+					->setShelterId($obj->petfinder->pet->shelterId->{'$t'})
+					->setSize($obj->petfinder->pet->size->{'$t'})
+					->setSex($obj->petfinder->pet->sex->{'$t'})
+					->setDescription($obj->petfinder->pet->description->{'$t'})
+					->setLastUpdate($obj->petfinder->pet->lastUpdate->{'$t'})
+					->setStatus($obj->petfinder->pet->status->{'$t'})
+					->setMedia($this->getArrMedia($obj->petfinder->pet->media->photos->photo));
+
+		return $myPet;
+
+	}
+
+	public function getRandomPet() {
+		$jsonRx = $this->curl('pet.getRandom?' . $this->getQueryString());
+		$obj = json_decode($jsonRx);
+
+		var_dump($obj);
+	}
+
+  public function setLocation($new_location) {
+    $this->search_pet->setLocation($new_location);
+		return $this;
+	}
+
+	public function getLocation() {
+		return $this->search_pet->location;
+	}
+
+	public function setAnimal($new_animal) {
+		$this->search_pet->setAnimal($new_animal);
+		return $this;
+	}
+	
+	public function getAnimal() {
+		return $this->search_pet->animal;
+	}
+
+	public function setBreeds($new_breeds = FALSE) {
+		$this->search_pet->breeds = $new_breeds;
+		return $this;
+	}
+
+	public function getBreeds() {
+		return $this->search_pet->breeds;
+	}
+
+	public function setAge($new_age = FALSE) {
+		$this->search_pet->age = $new_age;
+		return $this;
+	}
+
+	public function getAge() {
+		return $this->search_pet->age;
+	}
+
+	public function setShelterId($new_shelter_id = FALSE) {
+		$this->search_pet->shelter_id = $new_shelter_id;
+		return $this;
+	}
+
+	public function getShelterId() {
+		return $this->search_pet->shelter_id;
+	}
+
+	public function setOutput($new_output) {
+		$this->api_output = $new_output;
+		return $this;
+	}
+	
+	public function setSize($new_size) {
+		$this->search_pet->size = $new_size;
+		return $this;
+	}
+
+	public function getSize() {
+		return $this->search_pet->size;
+	}
+
+	public function setSex($new_sex) {
+		$this->search_pet->sex = $new_sex;
+		return $this;
+	}
+
+	public function getSex() {
+		return $this->search_pet->sex;
+	}
+	
+	public function getOutput() {
+		return $this->api_output;
+	}
+	
+	public function setOffset($new_offset) {
+		$this->search_pet->setOffset($new_offset);
+		return $this;
+	}
+	
+	public function getOffset() {
+		return $this->api_offset;
+	}
+
+	private function getArrBreedList($data) {
+		$aNewBL = Array();
+		foreach ($data as &$breed) {
+			//echo $breed->{'$t'} . '<br />';
+			$aNewBL[] = $breed->{'$t'};
+			
+		}	
+		return $aNewBL;
+	}
+
+	private function getArrMedia($data) {
+		$arr = Array();
+		$myM = new Media;
+
+		foreach ($data as &$photo) {
+			$myM->setSize($photo->{'@size'})
+					->setLink($photo->{'$t'})
+					->setId($photo->{'@id'});
+
+			$arr[] = $myM;
+		}
+
+		return $arr;
+	}
 
 	private function getToken() {
 		$jsonRx = $this->curl('auth.getToken?&format=json&key=' . $this->api_key . '&sig='. md5($this->api_secret.'&format=json&key='.$this->api_key));
 		$obj = json_decode($jsonRx);
 
-		if ($obj->{'petfinder'}->{'header'}->{'status'}->{'code'}->{'$t'} = '100')
+		if ($obj->petfinder->header->status->code = '100')
 		{
-			$this->api_token = (string) $obj->{'petfinder'}->{'auth'}->{'token'}->{'$t'};
-			setcookie('pf_token', $this->api_token, strtotime($obj->{'petfinder'}->{'auth'}->{'expiresString'}->{'$t'}));
+			$this->api_token = $obj->petfinder->auth->token->{'$t'};
+			setcookie('pf_token', $this->api_token, strtotime($obj->petfinder->auth->expiresString->{'$t'}));
 		}
 	}
 
   private function getSig($data) {
-    $this->ap_sig = md5($this->api_secret . $data);
+    $this->api_sig = md5($this->api_secret . $data);
   }
 
   private function getQueryString() {
