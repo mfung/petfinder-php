@@ -24,8 +24,8 @@ $pf ->setOutput('full')
 $searchPet = new Pet;
 
 $searchPet	->setAnimal('dog');
-
+echo "<pre>";
 var_dump($pf->getRandomPet($searchPet));
-
+echo "</pre>";
 echo "</html>";
 ?>

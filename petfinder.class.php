@@ -53,48 +53,16 @@ class PetFinder
 	public function getPet($new_pet_id) {
 		$mySearchPet = new Pet;
 		$mySearchPet->setId($new_pet_id);
-
-		$jsonRx = $this->curl('pet.get?' . $this->getQueryString($mySearchPet));
-		$obj = json_decode($jsonRx);
-
 		$myPet = new Pet;
-		$myPet->setId($obj->petfinder->pet->id->{'$t'})
-					->setAnimal($obj->petfinder->pet->animal->{'$t'})
-					->setBreeds($this->getArrBreedList($obj->petfinder->pet->breeds->breed))
-					->setMix($obj->petfinder->pet->mix->{'$t'})
-					->setAge($obj->petfinder->pet->age->{'$t'})
-					->setName($obj->petfinder->pet->name->{'$t'})
-					->setShelterId($obj->petfinder->pet->shelterId->{'$t'})
-					->setSize($obj->petfinder->pet->size->{'$t'})
-					->setSex($obj->petfinder->pet->sex->{'$t'})
-					->setDescription($obj->petfinder->pet->description->{'$t'})
-					->setLastUpdate($obj->petfinder->pet->lastUpdate->{'$t'})
-					->setStatus($obj->petfinder->pet->status->{'$t'})
-					->setMedia($this->getArrMedia($obj->petfinder->pet->media->photos->photo));
-
+		$myPet = $this->get('find_by_id', $mySearchPet);
 		return $myPet;
 
 	}
 
 	public function getRandomPet($mySearchPet) {
-		$jsonRx = $this->curl('pet.getRandom?' . $this->getQueryString($mySearchPet));
-		$obj = json_decode($jsonRx);
 		
 		$myPet = new Pet;
-		$myPet->setId($obj->petfinder->pet->id->{'$t'})
-					->setAnimal($obj->petfinder->pet->animal->{'$t'})
-					->setBreeds($this->getArrBreedList($obj->petfinder->pet->breeds->breed))
-					->setMix($obj->petfinder->pet->mix->{'$t'})
-					->setAge($obj->petfinder->pet->age->{'$t'})
-					->setName($obj->petfinder->pet->name->{'$t'})
-					->setShelterId($obj->petfinder->pet->shelterId->{'$t'})
-					->setSize($obj->petfinder->pet->size->{'$t'})
-					->setSex($obj->petfinder->pet->sex->{'$t'})
-					->setDescription($obj->petfinder->pet->description->{'$t'})
-					->setLastUpdate($obj->petfinder->pet->lastUpdate->{'$t'})
-					->setStatus($obj->petfinder->pet->status->{'$t'})
-					->setMedia($this->getArrMedia($obj->petfinder->pet->media->photos->photo));
-
+		$myPet = $this->get('random', $mySearchPet);
 		return $myPet;
 
 	}
@@ -104,6 +72,7 @@ class PetFinder
 		return $myPet;
 
 	}
+
 
 	public function setOutput($new_output) {
 		$this->api_output = $new_output;
@@ -141,9 +110,9 @@ class PetFinder
 
 	private function getArrMedia($data) {
 		$arr = Array();
-		$myM = new Media;
 
 		foreach ($data as &$photo) {
+			$myM = new Media;
 			$myM->setSize($photo->{'@size'})
 					->setLink($photo->{'$t'})
 					->setId($photo->{'@id'});
@@ -153,7 +122,41 @@ class PetFinder
 
 		return $arr;
 	}
+	private function get($method, $mySearchPet) {
 
+		$myMeth = FALSE;
+		switch ($method) {
+		case 'random':
+			$myMeth = 'pet.getRandom?';
+			break;
+		case 'find_by_id':
+			$myMeth = 'pet.Get?';
+			break;
+		default:
+			$myMeth = 'pet.getRandom?';
+			break;
+		}
+
+		$jsonRx = $this->curl($myMeth . $this->getQueryString($mySearchPet));
+		$obj = json_decode($jsonRx);
+		
+		$myPet = new Pet;
+		$myPet->setId($obj->petfinder->pet->id->{'$t'})
+					->setAnimal($obj->petfinder->pet->animal->{'$t'})
+					->setBreeds($this->getArrBreedList($obj->petfinder->pet->breeds->breed))
+					->setMix($obj->petfinder->pet->mix->{'$t'})
+					->setAge($obj->petfinder->pet->age->{'$t'})
+					->setName($obj->petfinder->pet->name->{'$t'})
+					->setShelterId($obj->petfinder->pet->shelterId->{'$t'})
+					->setSize($obj->petfinder->pet->size->{'$t'})
+					->setSex($obj->petfinder->pet->sex->{'$t'})
+					->setDescription($obj->petfinder->pet->description->{'$t'})
+					->setLastUpdate($obj->petfinder->pet->lastUpdate->{'$t'})
+					->setStatus($obj->petfinder->pet->status->{'$t'})
+					->setMedia($this->getArrMedia($obj->petfinder->pet->media->photos->photo));
+
+		return $myPet;
+	}
 	private function getToken() {
 		$jsonRx = $this->curl('auth.getToken?&format=json&key=' . $this->api_key . '&sig='. md5($this->api_secret.'&format=json&key='.$this->api_key));
 		$obj = json_decode($jsonRx);
