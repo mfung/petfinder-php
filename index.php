@@ -7,24 +7,25 @@ include_once('petfinder.class.php');
 
 $pf = new PetFinder;
 
-// $aBreedList = $pf->getBreedList('dog');
 
-//var_dump($aBreedList);
+//$aBreedList = $pf->getBreedList('dog');
 //foreach ($aBreedList as &$breed) {
 	//echo $breed."<br />";
 //}	
 
-var_dump($pf->getPet(15968436));
+//var_dump($pf->getPet(15968436));
 
-$pf	->setAnimal('dog')
-		->setBreeds()
-		->setSize('L')
-		->setSex('F')
-		->setLocation('92376')
-		->setShelterId()
-		->setOutput(25);
+echo '<br><br><br>Get Random <br><br>';
 
-var_dump($pf->getRandomPet());
+$pf ->setOutput('full')
+		->setOffset(0)
+		->setCount(25);
+
+$searchPet = new Pet;
+
+$searchPet	->setAnimal('dog');
+
+var_dump($pf->getRandomPet($searchPet));
 
 echo "</html>";
 ?>

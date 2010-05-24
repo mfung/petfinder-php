@@ -18,7 +18,6 @@ class PetFinder
 	var $api_offset			= FALSE; // set this to the value of lastOffset returned by a previous call to pet.find, 
 															 // and it will retrieve the next result set
 	var $api_count			= FALSE; // how many records to return for this particular API call (default is 25)
-	var $search_pet			= FALSE;
 
   // return array of pet objects $pets[] = $pet
   var $pets = Array();
@@ -42,8 +41,9 @@ class PetFinder
 	}
 
 	public function getBreedList($new_animal) {
-		$this->setAnimal($new_animal);
-		$jsonRx = $this->curl('breed.list?' . $this->getQueryString());
+		$mySearchPet = new Pet;
+		$mySearchPet->setAnimal($new_animal);
+		$jsonRx = $this->curl('breed.list?' . $this->getQueryString($mySearchPet));
 		$obj = json_decode($jsonRx);
 	 	$aBreedList = $obj->petfinder->breeds->breed;
 
@@ -51,14 +51,12 @@ class PetFinder
 	}
 
 	public function getPet($new_pet_id) {
-		$this->search_pet->setId($new_pet_id);
-		$jsonRx = $this->curl('pet.get?' . $this->getQueryString());
-		$obj = json_decode($jsonRx);
-		
-		echo '<br><br>GET PET DUMP<br>';
-		var_dump($obj);
+		$mySearchPet = new Pet;
+		$mySearchPet->setId($new_pet_id);
 
-		echo '<br><br>GET PET<br><br>';
+		$jsonRx = $this->curl('pet.get?' . $this->getQueryString($mySearchPet));
+		$obj = json_decode($jsonRx);
+
 		$myPet = new Pet;
 		$myPet->setId($obj->petfinder->pet->id->{'$t'})
 					->setAnimal($obj->petfinder->pet->animal->{'$t'})
@@ -78,87 +76,45 @@ class PetFinder
 
 	}
 
-	public function getRandomPet() {
-		$jsonRx = $this->curl('pet.getRandom?' . $this->getQueryString());
+	public function getRandomPet($mySearchPet) {
+		$jsonRx = $this->curl('pet.getRandom?' . $this->getQueryString($mySearchPet));
 		$obj = json_decode($jsonRx);
+		
+		$myPet = new Pet;
+		$myPet->setId($obj->petfinder->pet->id->{'$t'})
+					->setAnimal($obj->petfinder->pet->animal->{'$t'})
+					->setBreeds($this->getArrBreedList($obj->petfinder->pet->breeds->breed))
+					->setMix($obj->petfinder->pet->mix->{'$t'})
+					->setAge($obj->petfinder->pet->age->{'$t'})
+					->setName($obj->petfinder->pet->name->{'$t'})
+					->setShelterId($obj->petfinder->pet->shelterId->{'$t'})
+					->setSize($obj->petfinder->pet->size->{'$t'})
+					->setSex($obj->petfinder->pet->sex->{'$t'})
+					->setDescription($obj->petfinder->pet->description->{'$t'})
+					->setLastUpdate($obj->petfinder->pet->lastUpdate->{'$t'})
+					->setStatus($obj->petfinder->pet->status->{'$t'})
+					->setMedia($this->getArrMedia($obj->petfinder->pet->media->photos->photo));
 
-		var_dump($obj);
+		return $myPet;
+
 	}
 
-  public function setLocation($new_location) {
-    $this->search_pet->setLocation($new_location);
-		return $this;
-	}
-
-	public function getLocation() {
-		return $this->search_pet->location;
-	}
-
-	public function setAnimal($new_animal) {
-		$this->search_pet->setAnimal($new_animal);
-		return $this;
-	}
+	public function findPet($mySearchPet) {
 	
-	public function getAnimal() {
-		return $this->search_pet->animal;
-	}
+		return $myPet;
 
-	public function setBreeds($new_breeds = FALSE) {
-		$this->search_pet->breeds = $new_breeds;
-		return $this;
-	}
-
-	public function getBreeds() {
-		return $this->search_pet->breeds;
-	}
-
-	public function setAge($new_age = FALSE) {
-		$this->search_pet->age = $new_age;
-		return $this;
-	}
-
-	public function getAge() {
-		return $this->search_pet->age;
-	}
-
-	public function setShelterId($new_shelter_id = FALSE) {
-		$this->search_pet->shelter_id = $new_shelter_id;
-		return $this;
-	}
-
-	public function getShelterId() {
-		return $this->search_pet->shelter_id;
 	}
 
 	public function setOutput($new_output) {
 		$this->api_output = $new_output;
 		return $this;
 	}
-	
-	public function setSize($new_size) {
-		$this->search_pet->size = $new_size;
-		return $this;
-	}
-
-	public function getSize() {
-		return $this->search_pet->size;
-	}
-
-	public function setSex($new_sex) {
-		$this->search_pet->sex = $new_sex;
-		return $this;
-	}
-
-	public function getSex() {
-		return $this->search_pet->sex;
-	}
-	
 	public function getOutput() {
 		return $this->api_output;
 	}
 	
 	public function setOffset($new_offset) {
-		$this->search_pet->setOffset($new_offset);
+		$this->api_offsest = $new_offset;
 		return $this;
 	}
 	
@@ -166,13 +122,20 @@ class PetFinder
 		return $this->api_offset;
 	}
 
+	public function setCount($new_count) {
+		$this->api_count = $new_count;
+		return $this;
+	}
+
+	public function getCount() {
+		return $this->api_count;
+	}
+
 	private function getArrBreedList($data) {
 		$aNewBL = Array();
 		foreach ($data as &$breed) {
-			//echo $breed->{'$t'} . '<br />';
-			$aNewBL[] = $breed->{'$t'};
-			
-		}	
+				$aNewBL[] = $breed->{'$t'};			
+		}
 		return $aNewBL;
 	}
 
@@ -206,41 +169,41 @@ class PetFinder
     $this->api_sig = md5($this->api_secret . $data);
   }
 
-  private function getQueryString() {
+  private function getQueryString($myPet = FALSE) {
     $q_str = 'key=' . $this->api_key;
 
     if ($this->api_format)
 			$q_str .= '&format=' . $this->api_format;
 
-    if ($this->search_pet->id)
-      $q_str .= '&id=' . $this->search_pet->id;
+    if ($myPet->id)
+      $q_str .= '&id=' . $myPet->id;
 
-		if ($this->search_pet->animal)
-			$q_str .= '&animal=' . $this->search_pet->animal;
+		if ($myPet->animal)
+			$q_str .= '&animal=' . $myPet->animal;
 
-		if ($this->search_pet->breeds)
-			$q_str .= '&breeds=' . $this->search_pet->breeds;
+		if ($myPet->breeds)
+			$q_str .= '&breed=' . $myPet->breeds;
 			
-		if ($this->search_pet->mix)
-			$q_str .= '&mix=' . $this->search_pet->mix;
+		if ($myPet->mix)
+			$q_str .= '&mix=' . $myPet->mix;
 
-		if ($this->search_pet->age)
-			$q_str .= '&age=' . $this->search_pet->age;
+		if ($myPet->age)
+			$q_str .= '&age=' . $myPet->age;
 
-		if ($this->search_pet->name)
-			$q_str .= '&name=' . $this->search_pet->name;
+		if ($myPet->name)
+			$q_str .= '&name=' . $myPet->name;
 
-		if ($this->search_pet->shelter_id)
-			$q_str .= '&shelterid=' . $this->search_pet->shelter_id;
+		if ($myPet->shelter_id)
+			$q_str .= '&shelterid=' . $myPet->shelter_id;
 
-		if ($this->search_pet->size)
-			$q_str .= '&size=' . $this->search_pet->size;
+		if ($myPet->size)
+			$q_str .= '&size=' . $myPet->size;
 
-		if ($this->search_pet->sex)
-			$q_str .= '&sex=' . $this->search_pet->sex;
+		if ($myPet->sex)
+			$q_str .= '&sex=' . $myPet->sex;
 
-		if ($this->search_pet->status)
-			$q_str .= '&status=' . $this->search_pet->status;
+		if ($myPet->status)
+			$q_str .= '&status=' . $myPet->status;
 
 		if ($this->api_offset)
 			$q_str .= '&offset=' . $this->api_offset;
