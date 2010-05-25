@@ -18,14 +18,26 @@ $pf = new PetFinder;
 echo '<br><br><br>Get Random <br><br>';
 
 $pf ->setOutput('full')
-		->setOffset(0)
+		->setOffset(24)
 		->setCount(25);
 
 $searchPet = new Pet;
 
 $searchPet	->setAnimal('dog');
-echo "<pre>";
+
 var_dump($pf->getRandomPet($searchPet));
-echo "</pre>";
+
+
+echo '<br><br>Find Pet <br><br>';
+
+$searchPet2 = new Pet;
+$searchPet2			->setAnimal('dog')
+								->setBreeds('Sheperd')
+								->setAge('Baby')
+								->setSex('F')
+								->setLocation('92376');
+
+var_dump($pf->findPet($searchPet2));
+
 echo "</html>";
 ?>

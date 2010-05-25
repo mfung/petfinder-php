@@ -60,19 +60,20 @@ class PetFinder
 	}
 
 	public function getRandomPet($mySearchPet) {
-		
 		$myPet = new Pet;
 		$myPet = $this->get('random', $mySearchPet);
 		return $myPet;
-
 	}
 
 	public function findPet($mySearchPet) {
-	
+		$myPet = new Pet;
+		$myPet = $this->get('find', $mySearchPet);
 		return $myPet;
-
 	}
 
+	public function findShelter($myShelter) {
+		
+	}
 
 	public function setOutput($new_output) {
 		$this->api_output = $new_output;
@@ -83,7 +84,7 @@ class PetFinder
 	}
 	
 	public function setOffset($new_offset) {
-		$this->api_offsest = $new_offset;
+		$this->api_offset = $new_offset;
 		return $this;
 	}
 	
@@ -125,12 +126,18 @@ class PetFinder
 	private function get($method, $mySearchPet) {
 
 		$myMeth = FALSE;
+		$singlePet = TRUE;
+
 		switch ($method) {
 		case 'random':
 			$myMeth = 'pet.getRandom?';
 			break;
 		case 'find_by_id':
 			$myMeth = 'pet.Get?';
+			break;
+		case 'find':
+			$singlePet = FALSE;
+			$myMeth = 'pet.find?';
 			break;
 		default:
 			$myMeth = 'pet.getRandom?';
@@ -139,7 +146,25 @@ class PetFinder
 
 		$jsonRx = $this->curl($myMeth . $this->getQueryString($mySearchPet));
 		$obj = json_decode($jsonRx);
-		
+
+		echo '<br><br>Query: ' . $this->getQueryString($mySearchPet) . '<br><br>';
+
+		$myPets = Array();
+
+		if (!$singlePet)
+		{
+			echo 'Hello World';
+			var_dump($obj);
+		}
+		elseif ($singlePet)
+		{	
+			$myPet = new Pet;
+			$myPet = $this->decodePet($obj);
+			return $myPet;
+		}
+	}
+
+	private function decodePet($obj) {
 		$myPet = new Pet;
 		$myPet->setId($obj->petfinder->pet->id->{'$t'})
 					->setAnimal($obj->petfinder->pet->animal->{'$t'})
@@ -154,9 +179,9 @@ class PetFinder
 					->setLastUpdate($obj->petfinder->pet->lastUpdate->{'$t'})
 					->setStatus($obj->petfinder->pet->status->{'$t'})
 					->setMedia($this->getArrMedia($obj->petfinder->pet->media->photos->photo));
-
 		return $myPet;
 	}
+
 	private function getToken() {
 		$jsonRx = $this->curl('auth.getToken?&format=json&key=' . $this->api_key . '&sig='. md5($this->api_secret.'&format=json&key='.$this->api_key));
 		$obj = json_decode($jsonRx);
@@ -195,6 +220,9 @@ class PetFinder
 
 		if ($myPet->name)
 			$q_str .= '&name=' . $myPet->name;
+
+		if ($myPet->location)
+			$q_str .= '&location=' . $myPet->location;
 
 		if ($myPet->shelter_id)
 			$q_str .= '&shelterid=' . $myPet->shelter_id;

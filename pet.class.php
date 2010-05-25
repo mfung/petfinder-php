@@ -16,7 +16,7 @@ class pet {
   var $media					= FALSE;
 	var $contact				= FALSE;
 
-	public function setId($new_id) {
+	public function setId($new_id = FALSE) {
 		$this->id = $new_id;
 		return $this;
 	}
@@ -25,7 +25,7 @@ class pet {
 		return $this->id;
 	}
 
-	public function setAnimal($new_animal) {
+	public function setAnimal($new_animal = FALSE) {
 		$this->animal = $new_animal;
 		return $this;
 	}
@@ -34,7 +34,7 @@ class pet {
 		return $this->animal;
 	}
 
-	public function setBreeds($new_breeds) {
+	public function setBreeds($new_breeds = FALSE) {
 		$this->breeds = $new_breeds;
 		return $this;
 	}
@@ -43,7 +43,7 @@ class pet {
 		return $this->breeds;
 	}
 
-	public function setMix($new_mix) {
+	public function setMix($new_mix = FALSE) {
 		$this->mix = $new_mix;
 		return $this;
 	}
@@ -52,7 +52,7 @@ class pet {
 		return $this->mix;
 	}
 
-	public function setAge($new_age) {
+	public function setAge($new_age = FALSE) {
 		$this->age = $new_age;
 		return $this;
 	}
@@ -61,7 +61,7 @@ class pet {
 		return $this->age;
 	}
 
-	public function setName($new_name) {
+	public function setName($new_name = FALSE) {
 		$this->name = $new_name;
 		return $this;
 	}
@@ -70,7 +70,7 @@ class pet {
 		return $this->name;
 	}
 
-	public function setShelterId($new_shelter_id) {
+	public function setShelterId($new_shelter_id = FALSE) {
 		$this->shelter_id = $new_shelter_id;
 		return $this;
 	}
@@ -79,7 +79,7 @@ class pet {
 		return $this->shelter_id;
 	}
 
-	public function setLocation($new_location) {
+	public function setLocation($new_location = FALSE) {
 		$this->location = $new_location;
 		return $this;
 	}
@@ -88,7 +88,7 @@ class pet {
 		return $this->location;
 	}
 
-	public function setSize($new_size) {
+	public function setSize($new_size = FALSE) {
 		$this->size = $new_size;
 		return $this;
 	}
@@ -97,7 +97,7 @@ class pet {
 		return $this->size;
 	}
 
-	public function setSex($new_sex) {
+	public function setSex($new_sex = FALSE) {
 		$this->sex = $new_sex;
 		return $this;
 	}
@@ -106,7 +106,7 @@ class pet {
 		return $this->sex;
 	}
 
-	public function setDescription($new_desc) {
+	public function setDescription($new_desc = FALSE) {
 		$this->description = $new_desc;
 		return $this;
 	}
@@ -115,7 +115,7 @@ class pet {
 		return $this->description;
 	}
 
-	public function setLastUpdate($new_last_update) {
+	public function setLastUpdate($new_last_update = FALSE) {
 		$this->last_update = $new_last_update;
 		return $this;
 	}
@@ -124,7 +124,7 @@ class pet {
 		return $this->last_update;
 	}
 
-	public function setStatus($new_status) {
+	public function setStatus($new_status = FALSE) {
 		$this->status = $new_status;
 		return $this;
 	}
@@ -133,7 +133,7 @@ class pet {
 		return $this->status;
 	}
 
-	public function setMedia($new_media) {
+	public function setMedia($new_media = FALSE) {
 		$this->media = $new_media;
 		return $this;
 	}
@@ -142,7 +142,7 @@ class pet {
 		return $this->media;
 	}
 
-	public function setContact($new_contact) {
+	public function setContact($new_contact = FALSE) {
 		$this->contact = $new_contact;
 		return $this;
 	}
@@ -157,7 +157,7 @@ class Media {
 	var $link		= FALSE;
 	var $id			= FALSE;
 
-	public function setSize($new_size) {
+	public function setSize($new_size = FALSE) {
 		$this->size = $new_size;
 		return $this;
 	}
@@ -166,7 +166,7 @@ class Media {
 		return $this->size;
 	}
 
-	public function setLink($new_link) {
+	public function setLink($new_link = FALSE) {
 		$this->link = $new_link;
 		return $this;
 	}
@@ -174,7 +174,7 @@ class Media {
 	public function getLink() {
 		return $this->link;
 	}
-	public function setId($new_id) {
+	public function setId($new_id = FALSE) {
 		$this->id = $new_id;
 		return $this;
 	}
@@ -182,6 +182,23 @@ class Media {
 	public function getId() {
 		return $this->id;
 	}
+}
+
+class Shelter {
+	var $id 				= FALSE;
+	var $name 			= FALSE;
+	var $address1		= FALSE;
+	var $address2		= FALSE;
+	var $city				= FALSE;
+	var $state			= FALSE;
+	var $zip				= FALSE;
+	var $country		= FALSE;
+	var $latitude		= FALSE;
+	var $longitude	= FALSE;
+	var $phone			= FALSE;
+	var $fax				= FALSE;
+	var $email			= FALSE;
+
 }
 
 ?>
