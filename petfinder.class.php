@@ -8,11 +8,11 @@ include_once('config.ini.php');
 class PetFinder
 {
   // config api
-  var $api_url	 			= 'http://api.petfinder.com/';
-  var $api_key 				= FALSE;
-  var $api_secret 		= FALSE;
-  var $api_sig				= FALSE;
-  var $api_token			= FALSE;
+	var $api_url				= 'http://api.petfinder.com/';
+	var $api_key				= FALSE;
+	var $api_secret			= FALSE;
+	var $api_sig				= FALSE;
+	var $api_token			= FALSE;
 	var $api_format			= 'json';
 	var $api_output			= FALSE; // How much of the pet record to return: id, basic, full
 	var $api_offset			= FALSE; // set this to the value of lastOffset returned by a previous call to pet.find, 
@@ -20,11 +20,10 @@ class PetFinder
 	var $api_count			= FALSE; // how many records to return for this particular API call (default is 25)
 
   // return array of pet objects $pets[] = $pet
-  var $pets = Array();
+	var $pets = Array();
 
 	function __construct() {
 		// search pet info
-		
 		$this->api_key = $GLOBALS['api_key'];
 		$this->api_secret = $GLOBALS['api_secret'];
 
@@ -45,7 +44,7 @@ class PetFinder
 		$mySearchPet->setAnimal($new_animal);
 		$jsonRx = $this->curl('breed.list?' . $this->getQueryString($mySearchPet));
 		$obj = json_decode($jsonRx);
-	 	$aBreedList = $obj->petfinder->breeds->breed;
+		$aBreedList = $obj->petfinder->breeds->breed;
 
 		return $this->getArrBreedList($aBreedList);
 	}

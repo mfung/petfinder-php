@@ -1,19 +1,19 @@
 <?php
 class pet {
-  var $id							= FALSE;
-  var $animal					= FALSE;
-  var $breeds					= FALSE;
-  var $mix						= FALSE;
-  var $age						= FALSE;
-  var $name						= FALSE;
+	var $id							= FALSE;
+	var $animal					= FALSE;
+	var $breeds					= FALSE;
+	var $mix						= FALSE;
+	var $age						= FALSE;
+	var $name						= FALSE;
 	var $shelter_id			= FALSE;
 	var $location 			= FALSE;
-  var $size						= FALSE;
-  var $sex						= FALSE;
-  var $description		= FALSE;
-  var $last_update		= FALSE;
-  var $status					= FALSE;
-  var $media					= FALSE;
+	var $size						= FALSE;
+	var $sex						= FALSE;
+	var $description		= FALSE;
+	var $last_update		= FALSE;
+	var $status					= FALSE;
+	var $media					= FALSE;
 	var $contact				= FALSE;
 
 	public function setId($new_id = FALSE) {
